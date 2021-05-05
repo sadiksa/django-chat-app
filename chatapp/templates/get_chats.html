@@ -1,0 +1,9 @@
+{% for chat in chats %}
+	
+<a href="{% url 'chat' chat.pk 'sender' %}" >{{ chat.session_id }}</a>
+	{{ chat.starting_user }}
+	{{ chat.ending_user }}
+	{{ chat.saltbae }}
+	
+	<br><br>
+{% endfor %}

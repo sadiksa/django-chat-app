@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+
+{{ chat.session_id }}
+<span id="sender">{{ chat.starting_user }}</span>
+<span id="reicever">{{ chat.ending_user }}</span>
+
+{{ chat.saltbae }}
+
+<div id="new"></div>
+
+<br><br>
+
+ 
+<br><br>
+
+
+	<!--   method="POST" action="{% url 'recieve_message' chat.pk %} -->
+<form>
+    {% csrf_token %}
+    <input id="text" type="text" placeholder="Enter your message" aria-label="Message" name="message">
+    
+</form>
+<button id="send_button">Send Message</button>
+<button id="reiceve_button">Reiceve Message</button>
+
+<script type="text/javascript">
+	let send_button = document.getElementById("send_button");
+	let text = document.getElementById("text");
+	const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+	let sender = document.getElementById("sender").innerText;
+	let reicever = document.getElementById("reicever").innerText;
+
+	var d = new Date();
+ 	var time_ms = d.getTime();
+
+	send_button.addEventListener("click", ()=>{
+		let toSend = {
+		'session_id' : '{{ chat.session_id }}',
+		'sender' : sender,
+		'reicever' : reicever,
+		'messages' : [text.value],
+		'time' : time_ms
+	}
+		let jsonStr = JSON.stringify(toSend);
+		console.log(jsonStr);
+		console.log("{% url 'recieve_message' chat.pk %}");
+		const xhr = new XMLHttpRequest();
+		xhr.open("POST", "{% url 'recieve_message' chat.pk %}");
+		xhr.setRequestHeader("Content-Type", "application-json");
+		xhr.setRequestHeader("X-CSRFToken", csrftoken);
+		// it is mandatory for django
+		xhr.send(jsonStr)
+	});
+
+	let reiceve_button = document.getElementById("reiceve_button");
+	function get_json_data(){
+		const xhr = new XMLHttpRequest;
+		xhr.onload = function() {
+			// console.log(this.responseText);
+			
+			let div_m = document.getElementById("new");
+			
+			
+			coming = JSON.parse(this.responseText);
+			console.log(coming);
+			const deleteNodes = document.getElementById("new");
+  			deleteNodes.innerHTML = '';
+			for(let item in coming){
+				let new_u = document.createElement("span");
+				new_u.innerHTML = coming[item]["sender"];
+				new_u.style.fontWeight = 'bold'
+				div_m.appendChild(new_u);
+				let new_m = document.createElement("span");
+				new_m.innerHTML = coming[item]["messages"];
+				div_m.appendChild(new_m);
+				let new_br = document.createElement("br")
+				div_m.appendChild(new_br)
+			}
+		}
+
+		xhr.open("get", "{% url 'json_sender' chat.pk %}");
+		xhr.send();
+		setTimeout(get_json_data, 1000);
+	}
+	get_json_data();
+
+
+</script>
+</body>
+</html>

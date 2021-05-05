@@ -1,0 +1,18 @@
+
+
+<h1>Add Session</h1>
+
+<form method="POST" enctype="multipart/form-data">
+	<!-- enctype image almak için -->
+	{% csrf_token %}
+	
+	<!-- for ckeditor -->
+	{{ form.as_p }}
+	<button class="btn btn-danger">Add</button>
+
+	
+
+</form>
+
+
+

@@ -1,0 +1,15 @@
+{% for session in object_list %}
+	
+	{{ session.session_id }}
+	{{ session.starting_user }}
+	{{ session.ending_user }}
+	{{ session.saltbae }}
+	
+	
+	<br><br>
+{% endfor %}
+<form  method="POST" action="{% url 'get_chat' %}">
+    {% csrf_token %}
+    <input type="text" placeholder="username" aria-label="Choose your username" name="username">
+    <button type="submit">Get Chat</button>
+</form>
